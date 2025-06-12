@@ -2,10 +2,9 @@
 <html lang="en">
 
 <head>
-    @include('layouts.head-page-meta', ['title' => 'Hasil Filter Data CS Change Model'])
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    @include('layouts.head-page-meta', ['title' => 'Hasil Filter'])
     @include('layouts.head-css')
-
-    <!-- DataTables CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
 
@@ -19,6 +18,18 @@
     .dataTables_wrapper .dataTables_length select {
         display: inline-block;
         width: auto;
+    }
+
+    #qr-reader {
+        min-height: 300px;
+    }
+
+    .camera-error {
+        color: #dc3545;
+        padding: 10px;
+        border: 1px solid #dc3545;
+        border-radius: 4px;
+        margin-bottom: 10px;
     }
     </style>
 </head>
@@ -35,6 +46,12 @@
             ['label' => 'Data CS Change Model', 'url' => '/cs-change-model', 'active' => true],
             ]
             ])
+            @if (session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            @endif
 
             <div class="card p-4">
                 <form action="{{ route('cs.submit') }}" method="POST">
@@ -50,68 +67,65 @@
                             style="width:100%">
                             <thead>
                                 <tr>
-                                    <th>ID</th>
                                     <th style="max-width: 30px;">List</th>
-                                    <th style="max-width: 40px;">Station</th>
+                                    <th style="max-width: 50px">Station</th>
                                     <th>Check Item</th>
                                     <th>Standard</th>
-                                    <th>Actual</th>
-                                    <th>Trigger</th>
-                                    <th style="max-width: 65px;">Scan Result</th>
+                                    <th style="max-width: 60px">Actual</th>
+                                    <th style="max-width: 60px">Trigger</th>
+                                    <th style="max-width: 90px">Action</th>
+                                    <th style="max-width: 80px">Scan Result</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse ($data as $item)
                                 <tr>
-                                    <td style="display: none">{{ $item->id }}</td> {{-- ID disembunyikan --}}
-
-                                    <td data-label="List">
-                                        {{ $item->list }}
-                                        <input type="hidden" name="data[{{ $item->id }}][list]"
-                                            value="{{ $item->list }}">
-                                    </td>
-
-                                    <td data-label="Station">
-                                        {{ $item->station }}
+                                    <td>{{ $item->list }}</td>
+                                    <td>{{ $item->station }}</td>
+                                    <td>{{ $item->check_item }}</td>
+                                    <td>{{ $item->standard }}</td>
+                                    <td>{{ $item->actual }}</td>
+                                    <td>{{ $item->trigger }}</td>
+                                    <td class="d-flex justify-content-center align-items-center">
+                                        @if(isset($item->actual) && $item->actual == 'check')
                                         <input type="hidden" name="data[{{ $item->id }}][station]"
                                             value="{{ $item->station }}">
-                                    </td>
-
-                                    <td data-label="Check Item">
-                                        {{ $item->check_item }}
                                         <input type="hidden" name="data[{{ $item->id }}][check_item]"
                                             value="{{ $item->check_item }}">
-                                    </td>
-
-                                    <td data-label="Standard">
-                                        {{ $item->standard }}
                                         <input type="hidden" name="data[{{ $item->id }}][standard]"
                                             value="{{ $item->standard }}">
-                                    </td>
-
-                                    <td data-label="Actual">
-                                        <select name="data[{{ $item->id }}][actual]"
-                                            class="form-select form-select-sm actual-select">
-                                            <option value="" disabled selected>Pilih Aksi</option>
-                                            <option value="Check">Check</option>
-                                            <option value="Scan">Scan</option>
+                                        <input type="hidden" name="data[{{ $item->id }}][actual]" value="check">
+                                        <select name="data[{{ $item->id }}][action]" class="form-select actual-select"
+                                            required>
+                                            <option value="">-- Pilih --</option>
+                                            <option value="OK">OK</option>
+                                            <option value="NG">NG</option>
                                         </select>
-                                        <input type="hidden" name="data[{{ $item->id }}][scan_result]"
-                                            class="scan-result-hidden" />
+                                        @elseif(isset($item->actual) && $item->actual == 'scan')
+                                        <input type="hidden" name="data[{{ $item->id }}][station]"
+                                            value="{{ $item->station }}">
+                                        <input type="hidden" name="data[{{ $item->id }}][check_item]"
+                                            value="{{ $item->check_item }}">
+                                        <input type="hidden" name="data[{{ $item->id }}][standard]"
+                                            value="{{ $item->standard }}">
+                                        <input type="hidden" name="data[{{ $item->id }}][actual]" value="scan">
+                                        <button type="button" class="btn btn-primary btn-sm btn-scan"
+                                            data-id="{{ $item->id }}">Scan</button>
+                                        <input type="hidden" name="data[{{ $item->id }}][trigger]"
+                                            value="{{ $item->trigger }}">
+                                        <input type="hidden" name="data[{{ $item->id }}][action]"
+                                            class="scan-result-hidden" id="scan-result-{{ $item->id }}">
+                                        @else
+                                        <span>-</span>
+                                        @endif
                                     </td>
-
-                                    <td data-label="Trigger">{{ $item->trigger }}</td>
-
-                                    <td class="scan-result-cell" data-id="{{ $item->id }}" data-label="Scan Result">-
-                                    </td>
+                                    <td class="scan-result-cell" data-id="{{ $item->id }}">-</td>
                                 </tr>
                                 @empty
-                                <tr>
-                                    <td colspan="8" class="text-center">Tidak ada data ditemukan</td>
-                                </tr>
+                                
                                 @endforelse
-
                             </tbody>
+
                         </table>
                     </div>
 
@@ -123,22 +137,21 @@
         </div>
     </div>
 
-
-
-
     @include('layouts.footer-block')
 
-    <!-- Modal Kamera Scan -->
     <div class="modal fade" id="scanModal" tabindex="-1" aria-labelledby="scanModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="scanModalLabel">Scan QR/Barcode</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body text-center">
-                    <div id="qr-reader" style="width: 100%;"></div>
-                    <button type="button" id="swapCameraBtn" class="btn btn-secondary btn-sm mt-2">Swap Kamera</button>
+                    <div id="camera-error" class="camera-error" style="display: none;"></div>
+                    <div id="qr-reader"></div>
+                    <div class="mt-2">
+                        <button type="button" id="swapCameraBtn" class="btn btn-secondary btn-sm">Switch Camera</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -148,6 +161,11 @@
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
 
     <script>
     $(document).ready(function() {
@@ -160,161 +178,164 @@
             lengthChange: true,
             pageLength: 10,
             columnDefs: [{
-                    targets: 0,
-                    visible: false
-                }, // Sembunyikan kolom ID
+                    responsivePriority: 0,
+                    targets: 0
+                },
                 {
-                    responsivePriority: 1,
-                    targets: 1
-                }, // List tampil paling prioritas
+                    responsivePriority: 6,
+                    targets: 6
+                },
                 {
-                    responsivePriority: 2,
-                    targets: 2
-                }, // Station prioritas kedua
-                {
-                    responsivePriority: 3,
-                    targets: -1
-                } // Scan Result prioritas ketiga
+                    responsivePriority: 7,
+                    targets: 7
+                }
             ],
             language: {
                 search: "_INPUT_",
                 searchPlaceholder: "Cari data...",
                 lengthMenu: "Tampilkan _MENU_ data",
+                emptyTable: "Tidak ada data ditemukan",
                 info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
                 paginate: {
                     first: "Pertama",
                     last: "Terakhir",
-                    next: "›",
-                    previous: "‹"
+                    next: ">",
+                    previous: "<"
                 }
             }
         });
 
-
-        // Simpan nilai setiap kali dropdown berubah
-        $('#table-data-cs').on('change', 'select.actual-select', function() {
-            const selected = $(this).val();
-            const row = $(this).closest('tr');
-
-            let cellElement, hiddenInput;
-
-            // Ambil elemen dari parent row jika ini child
-            const parentRow = row.hasClass('child') ? row.prev() : row;
-
-            // Simpan ke hidden input
-            parentRow.find('.actual-select').val(selected);
-
-            // Juga simpan ke clone di child row (jika ada)
-            const childRow = parentRow.next();
-            if (childRow.hasClass('child')) {
-                childRow.find('.actual-select').val(selected);
-            }
-
-            // Update scan jika dipilih
-            if (selected === 'Scan') {
-                const scanCell = parentRow.find('.scan-result-cell');
-                const hiddenScan = parentRow.find('.scan-result-hidden');
-                startScanner(scanCell, hiddenScan);
-            }
-        });
-
-    });
-    </script>
-
-    <!-- QR Scanner Script -->
-    <script src="https://unpkg.com/html5-qrcode"></script>
-    <script>
-    let html5QrCode = null;
-    let currentFacingMode = "environment";
-    let scannerRunning = false;
-
-    function startScanner(cellElement, hiddenInput) {
-        $('#scanModal').modal('show');
-
-        navigator.mediaDevices.getUserMedia({
-                video: true
-            })
-            .then(function(stream) {
-                stream.getTracks().forEach(track => track.stop());
-
-                if (html5QrCode) {
-                    html5QrCode.clear();
+        function checkActualFields() {
+            let allFilled = true;
+            $('.actual-select').each(function() {
+                if (!$(this).val()) {
+                    allFilled = false;
+                    return false;
                 }
-
-                html5QrCode = new Html5Qrcode("qr-reader");
-                html5QrCode.start({
-                        facingMode: currentFacingMode
-                    }, {
-                        fps: 10,
-                        qrbox: 250
-                    },
-                    (decodedText, decodedResult) => {
-                        $(cellElement).text(decodedText);
-                        $(hiddenInput).val(decodedText);
-                        stopScanner();
-                    },
-                    (errorMessage) => {
-                        // optional error log
-                    }
-                ).then(() => {
-                    scannerRunning = true; // <- Tambahkan ini setelah start berhasil
-                }).catch(err => {
-                    alert("Gagal memulai kamera: " + err);
-                });
-            })
-            .catch(function(err) {
-                alert("Izin kamera ditolak atau tidak tersedia: " + err);
-                $('#scanModal').modal('hide');
             });
+            return allFilled;
+        }
+
+        $('.actual-select').on('change', function() {
+            $('button[type="submit"]').prop('disabled', !checkActualFields());
+        });
+
+        $('button[type="submit"]').prop('disabled', true);
+
+        $('form').on('submit', function(e) {
+            if (!checkActualFields()) {
+                e.preventDefault();
+                alert('Semua kolom Actual wajib diisi sebelum submit!');
+            }
+        });
+    });
+
+    let html5QrCode;
+    let currentFacingMode = "environment";
+    let scanTargetCell = null;
+    let scanHiddenInput = null;
+
+    $(document).on('click', '.btn-scan', function() {
+        let id = $(this).data('id');
+        scanTargetCell = $('.scan-result-cell[data-id="' + id + '"]');
+        scanHiddenInput = $('#scan-result-' + id);
+        startScanner();
+    });
+
+    function startScanner() {
+        $('#scanModal').modal('show');
+        $('#camera-error').hide();
+        $('#qr-reader').show();
+        $('#manual-input').hide();
+        $('#manual-scan-input').val('');
+
+        if (html5QrCode && html5QrCode.isScanning) {
+            html5QrCode.stop();
+        }
+
+        html5QrCode = new Html5Qrcode("qr-reader");
+
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            showCameraError("Browser doesn't support camera access");
+            return;
+        }
+
+        html5QrCode.start({
+                facingMode: currentFacingMode
+            }, {
+                fps: 10,
+                qrbox: 250,
+                aspectRatio: 1.0
+            },
+            (decodedText) => {
+                if (scanTargetCell && scanHiddenInput) {
+                    scanTargetCell.text(decodedText);
+                    scanHiddenInput.val(decodedText);
+                    stopScanner();
+                }
+            },
+            (errorMessage) => {
+                console.log("Scan error:", errorMessage);
+            }
+        ).catch(err => {
+            console.error("Camera error:", err);
+            showCameraError(err.message || "Failed to access camera");
+        });
     }
 
+    function showCameraError(message) {
+        let errorText = "Cannot access camera. Please:";
+        errorText += "<br>1. Grant camera permissions";
+        errorText += "<br>2. Use HTTPS (in production)";
+        errorText += "<br>3. Try a different browser";
 
+        if (message.includes('denied') || message.includes('permission')) {
+            errorText = "Camera access was denied. Please enable camera permissions in your browser settings.";
+        }
+
+        $('#camera-error').html(errorText).show();
+        $('#qr-reader').hide();
+        $('#manual-input').show();
+    }
 
     function stopScanner() {
-        if (html5QrCode && scannerRunning) {
+        if (html5QrCode) {
             html5QrCode.stop().then(() => {
                 html5QrCode.clear();
-                scannerRunning = false; // <- Tambahkan ini
                 $('#scanModal').modal('hide');
-            }).catch((err) => {
-                console.warn("Gagal menghentikan scanner:", err);
+            }).catch(err => {
+                console.log("Error stopping scanner:", err);
             });
         }
     }
 
-
     $('#swapCameraBtn').on('click', function() {
-        currentFacingMode = (currentFacingMode === "environment") ? "user" : "environment";
-
-        if (html5QrCode && scannerRunning) {
-            html5QrCode.stop().then(() => {
-                html5QrCode.clear();
-                scannerRunning = false;
-
-                html5QrCode.start({
-                        facingMode: currentFacingMode
-                    }, {
-                        fps: 10,
-                        qrbox: 250
-                    },
-                    () => {},
-                    () => {}
-                ).then(() => {
-                    scannerRunning = true;
-                });
-            });
-        }
+        currentFacingMode = currentFacingMode === "environment" ? "user" : "environment";
+        startScanner();
     });
 
+    $('#toggle-input').click(function() {
+        $('#qr-reader').toggle();
+        $('#manual-input').toggle();
+    });
+
+    $('#confirm-manual-input').click(function() {
+        const manualValue = $('#manual-scan-input').val().trim();
+        if (manualValue) {
+            if (scanTargetCell && scanHiddenInput) {
+                scanTargetCell.text(manualValue);
+                scanHiddenInput.val(manualValue);
+            }
+            stopScanner();
+        } else {
+            alert('Please enter a valid code');
+        }
+    });
 
     $('#scanModal').on('hidden.bs.modal', function() {
         stopScanner();
     });
-    </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
-    <script>
     feather.replace();
     </script>
 </body>

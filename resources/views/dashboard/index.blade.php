@@ -20,8 +20,8 @@
             ]
             ])
 
-            <!-- Statistics Cards -->
             <div class="stats-grid">
+
                 <div class="stat-card">
                     <div class="stat-icon" style="background: var(--primary-color);">
                         <svg width="20" height="20" fill="white" viewBox="0 0 20 20">
@@ -65,18 +65,20 @@
                     <div class="stat-label">Total CS Change Model</div>
                     <h3 class="stat-value">{{ number_format($totalCSChangeModel) }}</h3>
                 </div>
+
             </div>
 
         </div>
 
 
-        <!-- JS Libraries -->
-        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-        
+    </div>
+    @include('layouts.footer-block')
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </body>
 
 </html>

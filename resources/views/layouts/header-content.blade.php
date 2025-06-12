@@ -24,6 +24,7 @@
         <li class="dropdown pc-h-item header-user-profile">
             <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#" role="button"
                 aria-haspopup="false" data-bs-auto-close="outside" aria-expanded="false">
+                <img src="{{ asset('/') }}assets/images/user/person.png" alt="user-image" class="user-avtar">
                 <span>{{ auth()->user()->first_name }} {{ auth()->user()->last_name }}</span>
             </a>
             <div class="dropdown-menu dropdown-user-profile dropdown-menu-end pc-h-dropdown">
@@ -125,5 +126,20 @@ if (mobile_collapse) {
             });
         }
     });
+}
+
+function rm_menu() {
+    var temp_list = document.querySelector('.pc-sidebar');
+    if (temp_list) {
+        document.querySelector('.pc-sidebar').classList.remove('mob-sidebar-active');
+    }
+    if (document.querySelector('.topbar')) {
+        document.querySelector('.topbar').classList.remove('mob-sidebar-active');
+    }
+
+    document.querySelector('.pc-sidebar .pc-menu-overlay').remove();
+    if (document.querySelector('.topbar .pc-menu-overlay')) {
+        document.querySelector('.topbar .pc-menu-overlay').remove();
+    }
 }
 </script>

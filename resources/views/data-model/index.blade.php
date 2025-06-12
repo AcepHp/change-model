@@ -5,12 +5,10 @@
     @include('layouts.head-page-meta', ['title' => 'Data CS Change Model'])
     @include('layouts.head-css')
 
-    <!-- DataTables CSS (versi terbaru + responsive) -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
 
     <style>
-    /* Optional: Styling tambahan biar tabel lebih clean */
     .dataTables_wrapper .dataTables_filter input {
         margin-left: 0.5em;
         display: inline-block;
@@ -37,24 +35,21 @@
             ])
 
             <div class="card">
-                <div class="card-header">
-                    <h5>Data CS Change Model</h5>
-                </div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table id="table-data-cs" class="table table-striped table-hover  table-xl" style="width:100%">
                             <thead>
                                 <tr>
-                                    <th>#</th>
-                                    <th>Area</th>
-                                    <th>Line</th>
+                                    <th style="max-width: 20px;">#</th>
+                                    <th style="max-width: 35px;">Area</th>
+                                    <th style="max-width: 30px;">Line</th>
                                     <th>Model</th>
-                                    <th>List</th>
-                                    <th>Station</th>
+                                    <th style="max-width: 30px;">List</th>
+                                    <th style="max-width: 50px;">Station</th>
                                     <th>Check Item</th>
                                     <th>Standard</th>
-                                    <th>Actual</th>
-                                    <th>Trigger</th>
+                                    <th style="max-width: 45px;">Actual</th>
+                                    <th style="max-width: 50px;">Trigger</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -83,14 +78,13 @@
 
     @include('layouts/footer-block')
 
-    <!-- JQuery -->
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-
-    <!-- DataTables JS + Responsive plugin -->
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
-
-    <!-- DataTables Initialization -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
     <script>
     $(document).ready(function() {
         $('#table-data-cs').DataTable({
@@ -109,21 +103,15 @@
                 paginate: {
                     first: "Pertama",
                     last: "Terakhir",
-                    next: "›",
-                    previous: "‹"
+                    next: ">",
+                    previous: "<"
                 }
             }
         });
     });
     </script>
 
-    <!-- ApexCharts -->
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
-    <!-- Bootstrap, Popper, Feather Icons -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
     <script>
     feather.replace();
     </script>

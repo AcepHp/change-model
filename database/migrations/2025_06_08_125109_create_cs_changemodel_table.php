@@ -12,7 +12,7 @@ class CreateCsChangemodelTable extends Migration
     public function up(): void
     {
         Schema::create('cs_changemodel', function (Blueprint $table) {
-            $table->unsignedInteger('id')->primary();
+            $table->increments('id');
             $table->string('area', 9);
             $table->integer('line')->nullable();
             $table->string('model', 50)->nullable();

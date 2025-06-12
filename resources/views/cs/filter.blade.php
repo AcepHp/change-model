@@ -2,9 +2,8 @@
 <html lang="en">
 
 <head>
-    @include('layouts.head-page-meta', ['title' => 'Filter Data'])
+    @include('layouts.head-page-meta', ['title' => 'Filter Model'])
     @include('layouts.head-css')
-    <!-- DataTables CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
 
@@ -96,11 +95,15 @@
     </div>
 
     @include('layouts.footer-block')
-
-    <!-- Scripts -->
+    
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
 
     <script>
     $(document).ready(function() {
@@ -120,19 +123,14 @@
                 paginate: {
                     first: "Pertama",
                     last: "Terakhir",
-                    next: "›",
-                    previous: "‹"
+                    next: ">",
+                    previous: "<"
                 }
             }
         });
     });
     </script>
 
-    <!-- Bootstrap, Feather, Popper, Chart -->
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
     <script>
     feather.replace();
     </script>
