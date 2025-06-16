@@ -122,13 +122,10 @@
                                     <td class="scan-result-cell" data-id="{{ $item->id }}">-</td>
                                 </tr>
                                 @empty
-                                
                                 @endforelse
                             </tbody>
-
                         </table>
                     </div>
-
                     <div class="mt-3">
                         <button type="submit" class="btn btn-success">Submit</button>
                     </div>
@@ -300,14 +297,20 @@
 
     function stopScanner() {
         if (html5QrCode) {
-            html5QrCode.stop().then(() => {
-                html5QrCode.clear();
-                $('#scanModal').modal('hide');
-            }).catch(err => {
-                console.log("Error stopping scanner:", err);
-            });
+            html5QrCode.stop()
+                .then(() => {
+                    html5QrCode.clear();
+                    $('#scanModal').modal('hide');
+                })
+                .catch((err) => {
+                    console.log("Stop failed:", err);
+                    $('#scanModal').modal('hide');
+                });
+        } else {
+            $('#scanModal').modal('hide');
         }
     }
+
 
     $('#swapCameraBtn').on('click', function() {
         currentFacingMode = currentFacingMode === "environment" ? "user" : "environment";

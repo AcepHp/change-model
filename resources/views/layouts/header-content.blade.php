@@ -12,14 +12,11 @@
                 <i class="ti ti-menu-2"></i>
             </a>
         </li>
-
     </ul>
 </div>
 
 <div class="ms-auto">
     <ul class="list-unstyled">
-
-
         <!-- User Profile Dropdown -->
         <li class="dropdown pc-h-item header-user-profile">
             <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#" role="button"
@@ -36,19 +33,15 @@
                             </h6>
                             <span>PT. Astra Visteon</span>
                         </div>
-
                         <a href="{{ route('logout') }}" class="pc-head-link bg-transparent"
                             onclick="event.preventDefault();document.getElementById('logout-form').submit();">
                             <i class="ti ti-power text-danger"></i>
                         </a>
-
                         <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                             @csrf
                         </form>
-
                     </div>
                 </div>
-
                 <ul class="nav drp-tabs nav-fill nav-tabs" id="mydrpTab" role="tablist">
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active" id="drp-t1" data-bs-toggle="tab" data-bs-target="#drp-tab-1"
@@ -57,24 +50,20 @@
                         </button>
                     </li>
                 </ul>
-
                 <div class="tab-content" id="mysrpTabContent">
                     <div class="tab-pane fade show active" id="drp-tab-1" role="tabpanel" aria-labelledby="drp-t1"
                         tabindex="0">
                         <a href="{{ route('edit.profile') }}" class="dropdown-item">
                             <i class="ti ti-edit-circle"></i> Edit Profile
                         </a>
-
                         <a href="{{ route('logout') }}" class="dropdown-item"
                             onclick="event.preventDefault();document.getElementById('logout-form').submit();">
                             <i class="ti ti-power"></i> Logout
                         </a>
                     </div>
-
                 </div>
             </div>
         </li>
-
     </ul>
 
 </div>
@@ -89,7 +78,6 @@ if (sidebar_hide) {
         }
     });
 }
-
 // Menu collapse click start
 var mobile_collapse_over = document.querySelector('#mobile-collapse');
 if (mobile_collapse_over) {
