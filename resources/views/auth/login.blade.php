@@ -8,6 +8,9 @@
 
 <body>
     @include('layouts.loader')
+    
+    <!-- Include the loading component -->
+    @include('layouts.loading')
 
     <div class="auth-main">
         <div class="auth-wrapper v3">

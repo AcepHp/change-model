@@ -39,17 +39,34 @@ class CsChangeModelController extends Controller
         $area  = $request->input('area');
         $line  = $request->input('line');
         $model = $request->input('model');
-        $logId = DB::table('log_cs')->insertGetId([
-            'area'  => $area,
-            'line'  => $line,
-            'model' => $model,
-            'shift' => $shift,
-            'date'  => $date,
-        ]);
+
+        // Cek apakah sudah ada data log_cs yang sama
+        $existingLog = DB::table('log_cs')->where([
+            ['area', '=', $area],
+            ['line', '=', $line],
+            ['model', '=', $model],
+            ['shift', '=', $shift],
+            ['date', '=', $date],
+        ])->first();
+
+        if ($existingLog) {
+            $logId = $existingLog->id_log;
+        } else {
+            $logId = DB::table('log_cs')->insertGetId([
+                'area'  => $area,
+                'line'  => $line,
+                'model' => $model,
+                'shift' => $shift,
+                'date'  => $date,
+            ]);
+        }
+
+        // Simpan detail
         foreach ($data as $id => $item) {
             if (!isset($item['station'], $item['check_item'], $item['standard'], $item['actual'])) {
                 continue;
             }
+
             $actualValue = '';
             if ($item['actual'] === 'check') {
                 $actualValue = $item['action'];
@@ -60,6 +77,7 @@ class CsChangeModelController extends Controller
             } else {
                 continue;
             }
+
             DB::table('log_detail_cs')->insert([
                 'id_log'     => $logId,
                 'station'    => $item['station'],
@@ -68,6 +86,7 @@ class CsChangeModelController extends Controller
                 'actual'     => $actualValue,
             ]);
         }
+
         return redirect()->back()->with('success', 'Data berhasil disimpan.');
     }
 }

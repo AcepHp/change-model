@@ -9,7 +9,12 @@
     <label>Change Model</label>
     <i class="ti ti-dashboard"></i>
 </li>
-
+<li class="pc-item">
+    <a href="/data-model" class="pc-link">
+        <span class="pc-micon"><i class="ti ti-table"></i></span>
+        <span class="pc-mtext">Data Model</span>
+    </a>
+</li>
 <li class="pc-item">
     <a href="/cs-change-model" class="pc-link">
         <span class="pc-micon"><i class="ti ti-letter-t"></i></span>
@@ -17,8 +22,8 @@
     </a>
 </li>
 <li class="pc-item">
-    <a href="/data-model" class="pc-link">
-        <span class="pc-micon"><i class="ti ti-table"></i></span>
-        <span class="pc-mtext">Data Model</span>
+    <a href="/export-pdf" class="pc-link">
+        <span class="pc-micon"><i class="ti ti-file"></i></span>
+        <span class="pc-mtext">Export PDF</span>
     </a>
 </li>

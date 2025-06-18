@@ -10,7 +10,7 @@
 
 <body>
     @include('layouts.layout-vertical')
-
+    @include('layouts.loading')
     <div class="pc-container">
         <div class="pc-content">
 

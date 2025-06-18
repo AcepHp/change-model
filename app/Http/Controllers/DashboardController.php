@@ -3,80 +3,68 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\User;
-use App\Models\LogCS;
 use App\Models\LogDetailCS;
 use App\Models\CSChangeModel;
-use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $totalUsers = User::count();
-        $totalLogCS = LogCS::count();
-        $totalLogDetailCS = LogDetailCS::count();
+        $today = Carbon::today();
+        $shift = $request->get('shift');
+
+        // Query utama, ambil semua data (untuk DataTables)
+        $logDetailTableData = LogDetailCS::with('log')
+            ->whereHas('log', function ($query) use ($today, $shift) {
+                $query->whereDate('date', $today);
+                if (!is_null($shift)) {
+                    $query->where('shift', $shift);
+                }
+            })
+            ->get();
+
+        // Summary data
+        $checksheetToday = LogDetailCS::whereHas('log', fn($q) => $q->whereDate('date', $today))->count();
+        $checksheetShift1 = LogDetailCS::whereHas('log', fn($q) => $q->whereDate('date', $today)->where('shift', 1))->count();
+        $checksheetShift2 = LogDetailCS::whereHas('log', fn($q) => $q->whereDate('date', $today)->where('shift', 2))->count();
         $totalCSChangeModel = CSChangeModel::count();
 
-        // Data per tanggal (date)
-        $logcsByDate = LogCS::select('date', DB::raw('count(*) as total'))
-            ->groupBy('date')
-            ->orderBy('date')
-            ->get();
-
-        // Data per minggu (week) - SQL Server
-        $logcsByWeek = LogCS::select(
-                DB::raw('DATEPART(ISO_WEEK, date) as week'),
-                DB::raw('DATEPART(YEAR, date) as year'),
-                DB::raw('count(*) as total')
-            )
-            ->groupBy(DB::raw('DATEPART(YEAR, date)'), DB::raw('DATEPART(ISO_WEEK, date)'))
-            ->orderBy(DB::raw('DATEPART(YEAR, date)'))
-            ->orderBy(DB::raw('DATEPART(ISO_WEEK, date)'))
-            ->get();
-
-        // Data per bulan (month)
-        $logcsByMonth = LogCS::select(
-                DB::raw("FORMAT(date, 'yyyy-MM') as month"),
-                DB::raw('count(*) as total')
-            )
-            ->groupBy(DB::raw("FORMAT(date, 'yyyy-MM')"))
-            ->orderBy(DB::raw("FORMAT(date, 'yyyy-MM')"))
-            ->get();
-
-        // Data Log CS per hari dalam minggu ini untuk chart batang
-        $startOfWeek = Carbon::now()->startOfWeek();
-        $endOfWeek = Carbon::now()->endOfWeek();
-
-        $logsThisWeek = LogCS::select(
-                DB::raw("DATENAME(WEEKDAY, date) as day"),
-                DB::raw('count(*) as total')
-            )
-            ->whereBetween('date', [$startOfWeek, $endOfWeek])
-            ->groupBy(DB::raw("DATENAME(WEEKDAY, date)"))
-            ->get();
-
-        $daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-
-        $dataByDay = collect($daysOfWeek)->map(function($day) use ($logsThisWeek) {
-            $log = $logsThisWeek->firstWhere('day', $day);
-            return $log ? $log->total : 0;
-        });
-
-        $totalLogsWeek = $logsThisWeek->sum('total');
+        // OK / NG count
+        $okCount = $logDetailTableData->where('actual', 'OK')->count();
+        $ngCount = $logDetailTableData->where('actual', 'NG')->count();
+        
+        // Ambil data filter options
+        $areas  = \DB::table('log_cs')->select('area')->distinct()->pluck('area');
+        $lines  = \DB::table('log_cs')->select('line')->distinct()->pluck('line');
+        $models = CSChangeModel::select('model')->distinct()->pluck('model');
 
         return view('dashboard.index', compact(
-            'totalUsers',
-            'totalLogCS',
-            'totalLogDetailCS',
-            'totalCSChangeModel',
-            'logcsByDate',
-            'logcsByWeek',
-            'logcsByMonth',
-            'daysOfWeek',
-            'dataByDay',
-            'totalLogsWeek'
+            'checksheetToday', 'checksheetShift1', 'checksheetShift2',
+            'totalCSChangeModel', 'logDetailTableData', 'shift',
+            'okCount', 'ngCount', 'areas', 'lines', 'models'
         ));
+    }
+    
+
+    public function filterData(Request $request)
+    {
+        $date  = $request->get('date') ?? Carbon::today()->format('Y-m-d');
+        $shift = $request->get('shift');
+        $area  = $request->get('area');
+        $line  = $request->get('line');
+        $model = $request->get('model');
+
+        $logDetailTableData = LogDetailCS::with('log')
+            ->whereHas('log', function ($query) use ($date, $shift, $area, $line, $model) {
+                $query->whereDate('date', $date);
+                if ($shift) $query->where('shift', $shift);
+                if ($area)  $query->where('area', $area);
+                if ($line)  $query->where('line', $line);
+                if ($model) $query->where('model', $model);
+            })
+            ->get();
+
+        return view('dashboard.partials.log_detail_table', compact('logDetailTableData'))->render();
     }
 }

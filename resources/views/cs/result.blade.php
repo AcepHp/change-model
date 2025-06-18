@@ -36,7 +36,7 @@
 
 <body>
     @include('layouts.layout-vertical')
-
+    @include('layouts.loading')
     <div class="pc-container">
         <div class="pc-content">
             @include('layouts.breadcrumb', [
@@ -168,12 +168,11 @@
     $(document).ready(function() {
         const table = $('#table-data-cs').DataTable({
             responsive: true,
-            paging: true,
+            paging: false,
             searching: true,
             ordering: true,
-            info: true,
-            lengthChange: true,
-            pageLength: 10,
+            info: false,
+            lengthChange: false,
             columnDefs: [{
                     responsivePriority: 0,
                     targets: 0

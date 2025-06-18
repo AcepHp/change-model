@@ -8,7 +8,7 @@ class LogCs extends Model
 {
     protected $table = 'log_cs';
     protected $primaryKey = 'id_log';
-    public $timestamps = false; // kalau tidak ada created_at, updated_at
+    public $timestamps = false;
 
     protected $fillable = [
         'area',

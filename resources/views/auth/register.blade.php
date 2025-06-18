@@ -8,7 +8,7 @@
 
 <body>
     @include('layouts.loader')
-
+    @include('layouts.loading')
     <div class="auth-main">
         <div class="auth-wrapper v3">
             <div class="auth-form">
